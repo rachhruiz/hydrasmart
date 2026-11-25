@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EcoRoot | Riego inteligente</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f4f5ed;
+    color: #254b36;
+    font: 16px system-ui, sans-serif;
+}
+
+main {
+    max-width: 650px;
+    margin: auto;
+    padding: 22px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+}
+
+small, p {
+    color: #657568;
+}
+
+header span {
+    margin-left: auto;
+    background: #dce8d4;
+    padding: 7px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+}
+
+.logo {
+    background: #dce8d4;
+    padding: 12px;
+    border-radius: 18px;
+    font-size: 30px;
+}
+
+.hero {
+    background: #e5eddf;
+    border-radius: 24px;
+    text-align: center;
+    padding: 16px;
+}
+
+.hero svg {
+    width: 100%;
+    max-height: 260px;
+}
+
+.status {
+    display: inline-block;
+    padding: 8px 16px;
+    background: white;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.tile, section {
+    background: white;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 3px 12px #254b3608;
+}
+
+section {
+    margin-top: 16px;
+}
+
+.tile label {
+    display: block;
+    font-size: 13px;
+    color: #657568;
+}
+
+.value {
+    font-size: 27px;
+    font-weight: 700;
+    margin: 6px 0;
+}
+
+input[type=range] {
+    width: 100%;
+    accent-color: #54815d;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+    border-radius: 12px;
+    padding: 11px 14px;
+    background: #e5eddf;
+    color: #254b36;
+    font-weight: 600;
+}
+
+button.active, button.primary {
+    background: #386447;
+    color: white;
+}
+
+button:disabled {
+    opacity: .45;
+    cursor: default;
+}
+
+.buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.buttons button {
+    flex: 1;
+}
+
+.full {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.drop {
+    animation: fall .8s linear infinite;
+    opacity: 0;
+}
+
+.on .drop {
+    opacity: 1;
+}
+
+@keyframes fall {
+    from {
+        transform: translateY(-8px);
+    }
+    to {
+        transform: translateY(22px);
+    }
+}
+
+#plant {
+    transform-origin: 160px 112px;
+    transition: transform .5s;
+}
+
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #657568;
+    margin: 20px 0;
+}
+
+#log {
+    padding-left: 20px;
+    font-size: 13px;
+    max-height: 160px;
+    overflow: auto;
+}
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px 0;
+}
+
+@media(max-width: 380px) {
+    main {
+        padding: 12px;
+    }
+    .tile {
+        padding: 12px;
+    }
+    .value {
+        font-size: 23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<!-- ENCABEZADO -->
+
+<header>
+    <div class="logo">🌱</div>
+    <div>
+        <h1>EcoRoot</h1>
+        <small>Smart irrigation system</small>
+    </div>
+    <span>SIMULACIÓN</span>
+</header>
+
+<!-- ILUSTRACIÓN DE LA ALBAHACA -->
+
+<div class="hero">
+
+    <h2>Mi albahaca</h2>
+    <small>
+        <i>Ocimum basilicum</i> · Planta aromática
+    </small>
+
+    <svg viewBox="0 0 320 180"
+         role="img"
+         aria-label="Albahaca con sistema de riego">
+
+        <!-- Sombra -->
+        <ellipse cx="160" cy="164"
+                 rx="75" ry="7"
+                 fill="#cedbc5"/>
+
+        <!-- Maceta -->
+        <path d="M111 112 L122 159
+                 Q160 173 198 159 L209 112Z"
+              fill="#b77e60"/>
+
+        <!-- Tierra -->
+        <ellipse cx="160" cy="112"
+                 rx="49" ry="12"
+                 fill="#70533b"/>
+
+        <!-- Planta -->
+        <g id="plant">
+
+            <!-- Tallos -->
+            <path d="M160 111 Q153 72 165 27
+                     M158 87 Q135 66 116 58
+                     M160 70 Q181 51 200 47"
+                  stroke="#46764a"
+                  stroke-width="5"
+                  fill="none"
+                  stroke-linecap="round"/>
+
+            <!-- Hojas -->
+            <g fill="#63985d">
+
+                <path d="M164 47 Q139 24 166 8
+                         Q190 31 164 47"/>
+
+                <path d="M147 78 Q105 82 96 47
+                         Q132 39 147 78"/>
+
+                <path d="M165 69 Q176 30 216 35
+                         Q213 66 165 69"
+                      fill="#477e4e"/>
+
+                <path d="M159 99 Q178 69 203 80
+                         Q190 104 159 99"
+                      fill="#8caf72"/>
+
+                <path d="M155 57 Q120 54 124 25
+                         Q152 23 155 57"/>
+
+                <path d="M155 99 Q121 102 113 81
+                         Q141 73 155 99"
+                      fill="#729e60"/>
+
+            </g>
+
+            <!-- Nervaduras -->
+            <g stroke="#d0e4b9"
+               stroke-width="1"
+               fill="none">
+
+                <path d="M164 44 L166 17
+                         M145 75 L104 51
+                         M170 65 L207 40
+                         M164 95 L194 84"/>
+
+            </g>
+
+        </g>
+
+        <!-- Depósito de agua -->
+        <rect x="236" y="105"
+              width="45" height="52"
+              rx="7" fill="white"
+              stroke="#8ca395"/>
+
+        <rect x="242" y="125"
+              width="33" height="26"
+              rx="3" fill="#91c8df"/>
+
+        <!-- Manguera -->
+        <path d="M258 105 V90
+                 Q258 83 250 83 H218 V95"
+              stroke="#657f72"
+              stroke-width="5"
+              fill="none"
+              stroke-linecap="round"/>
+
+        <!-- Gotas animadas -->
+        <g id="drops" fill="#54a9d6">
+
+            <path class="drop"
+                  d="M218 98 q-7 10 0 13
+                     q7 -3 0 -13"/>
+
+            <path class="drop"
+                  style="animation-delay:.4s"
+                  d="M209 99 q-5 8 0 10
+                     q5 -2 0 -10"/>
+
+        </g>
+
+        <!-- Sensor de humedad -->
+        <path d="M133 100 V136"
+              stroke="#c5c9c3"
+              stroke-width="5"/>
+
+        <rect x="125" y="91"
+              width="16" height="12"
+              rx="3" fill="#456d53"/>
+
+    </svg>
+
+    <div class="status" id="status"
+         aria-live="polite"></div>
+
+    <p id="health"></p>
+
+</div>
+
+<!-- SENSORES AMBIENTALES -->
+
+<section>
+
+    <h2>Monitoreo ambiental</h2>
+
+    <div class="grid">
+
+        <div class="tile">
+            💧
+            <label for="soil">
+                Humedad del suelo
+            </label>
+            <div class="value" id="soilV"></div>
+            <input id="soil" type="range"
+                   min="0" max="100" value="28">
+        </div>
+
+        <div class="tile">
+            🌡️
+            <label for="temp">
+                Temperatura
+            </label>
+            <div class="value" id="tempV"></div>
+            <input id="temp" type="range"
+                   min="5" max="45" value="29">
+        </div>
+
+        <div class="tile">
+            ☁️
+            <label for="hum">
+                Humedad ambiental
+            </label>
+            <div class="value" id="humV"></div>
+            <input id="hum" type="range"
+                   min="0" max="100" value="45">
+        </div>
+
+        <div class="tile">
+            ☀️
+            <label for="light">
+                Intensidad luminosa
+            </label>
+            <div class="value" id="lightV"></div>
+            <input id="light" type="range"
+                   min="0" max="100" value="75">
+        </div>
+
+    </div>
+
+</section>
+
+<!-- CONTROL DE RIEGO -->
+
+<section>
+
+    <h2>Control de riego</h2>
+
+    <div class="buttons">
+
+        <button id="auto" class="active">
+            Automático
+        </button>
+
+        <button id="manual">
+            Manual
+        </button>
+
+    </div>
+
+    <div class="line">
+        <small>Umbral adaptativo de humedad</small>
+        <strong id="threshold"></strong>
+    </div>
+
+    <p id="reason" aria-live="polite"></p>
+
+    <button id="toggle" class="full" hidden>
+        Activar riego
+    </button>
+
+    <button id="advance" class="primary full">
+        💧 Simular avance del riego
+    </button>
+
+</section>
+
+<!-- ESCENARIOS -->
+
+<section>
+
+    <h2>Escenarios de prueba</h2>
+
+    <div class="buttons">
+
+        <button data-s="dry">
+            🏜️ Sequía
+        </button>
+
+        <button data-s="hot">
+            ☀️ Calor extremo
+        </button>
+
+        <button data-s="wet">
+            🌧️ Exceso de humedad
+        </button>
+
+    </div>
+
+</section>
+
+<!-- HISTORIAL -->
+
+<section>
+
+    <h2>Historial de simulación</h2>
+
+    <div class="line">
+        <small>Agua utilizada (estimada)</small>
+        <strong id="water">0 mL</strong>
+    </div>
+
+    <ul id="log"></ul>
+
+</section>
+
+<button class="full" id="reset">
+    ↻ Reiniciar simulación
+</button>
+
+<footer>
+    EcoRoot · Tecnología al servicio de la naturaleza
+    <br>
+    Prototipo educativo. Sensores, umbrales y consumo
+    ilustrativos; no controla equipos reales.
+</footer>
+
+</main>
+
+<!-- PROGRAMACIÓN DEL SISTEMA -->
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+const ids = [
+    'soil',
+    'temp',
+    'hum',
+    'light'
+];
+
+let auto = true;
+let manual = false;
+let water = 0;
+let previous = null;
+
+// Lectura de sensores simulados
+
+const read = () => ids.map(
+    id => Number($(id).value)
+);
+
+// Registro de eventos
+
+function log(msg) {
+
+    const li = document.createElement('li');
+
+    li.textContent =
+        new Date().toLocaleTimeString('es-MX')
+        + ' · ' + msg;
+
+    $('log').prepend(li);
+
+    while ($('log').children.length > 20) {
+        $('log').lastChild.remove();
+    }
+
+}
+
+// Algoritmo de control adaptativo
+
+function update() {
+
+    const [s, t, h, l] = read();
+
+    const limit = Math.round(
+        Math.max(
+            25,
+            Math.min(
+                55,
+                35
+                + (t - 25) * 0.6
+                + (50 - h) * 0.12
+                + (l - 50) * 0.08
+            )
+        )
+    );
+
+    // Activación de la bomba
+
+    const on = s < 85 &&
+        (auto ? s < limit : manual);
+
+    // Actualización de los sensores
+
+    ids.forEach((id, i) => {
+
+        $(id + 'V').textContent = [
+            s + '%',
+            t + ' °C',
+            h + '%',
+            l + '%'
+        ][i];
+
+    });
+
+    $('threshold').textContent = limit + '%';
+
+    // Estado de la bomba
+
+    $('status').textContent = on
+        ? '💧 Riego activado'
+        : '✓ Bomba apagada';
+
+    // Estado de la planta
+
+    $('health').textContent = s >= 85
+        ? 'Exceso de humedad'
+        : s < limit
+        ? 'La albahaca necesita agua'
+        : 'Humedad suficiente';
+
+    // Animación de la planta
+
+    $('plant').style.transform = s < 20
+        ? 'rotate(-9deg)'
+        : 'rotate(0deg)';
+
+    // Animación del agua
+
+    $('drops').classList.toggle('on', on);
+
+    // Selección de modo
+
+    $('auto').classList.toggle('active', auto);
+
+    $('manual').classList.toggle(
+        'active', !auto
+    );
+
+    $('toggle').hidden = auto;
+
+    $('toggle').textContent = manual
+        ? 'Detener riego'
+        : 'Activar riego';
+
+    $('toggle').disabled = s >= 85 && !manual;
+
+    $('advance').disabled = !on;
+
+    // Mensajes del sistema
+
+    $('reason').textContent = s >= 85
+
+        ? 'Protección: riego bloqueado por exceso de humedad.'
+
+        : auto
+
+        ? (
+            on
+            ? 'La humedad está por debajo del umbral adaptativo.'
+            : 'La humedad es suficiente; no se requiere riego.'
+        )
+
+        : (
+            on
+            ? 'Riego manual en funcionamiento.'
+            : 'Control manual en espera.'
+        );
+
+    // Consumo de agua
+
+    $('water').textContent = water + ' mL';
+
+    // Registro de cambios
+
+    if (previous !== on) {
+
+        log(
+            on
+            ? 'Bomba activada'
+            : 'Bomba apagada'
+        );
+
+        previous = on;
+
+    }
+
+    return on;
+
+}
+
+// Detectar cambios en los sensores
+
+ids.forEach(id => {
+
+    $(id).addEventListener('input', update);
+
+});
+
+// Modo automático
+
+$('auto').onclick = () => {
+
+    auto = true;
+    manual = false;
+    update();
+
+};
+
+// Modo manual
+
+$('manual').onclick = () => {
+
+    auto = false;
+    manual = false;
+    update();
+
+};
+
+// Encendido y apagado manual
+
+$('toggle').onclick = () => {
+
+    manual = !manual;
+    update();
+
+};
+
+// Simular el avance del riego
+
+$('advance').onclick = () => {
+
+    if (!update()) return;
+
+    $('soil').value = Math.min(
+        85,
+        Number($('soil').value) + 5
+    );
+
+    water += 20;
+
+    log(
+        'Riego simulado: +5 puntos de humedad '
+        + '(hasta el límite), 20 mL'
+    );
+
+    update();
+
+};
+
+// Modificar valores ambientales
+
+function setValues(v) {
+
+    ids.forEach((id, i) => {
+
+        $(id).value = v[i];
+
+    });
+
+}
+
+// Escenarios de prueba
+
+document.querySelectorAll('[data-s]')
+.forEach(b => {
+
+    b.onclick = () => {
+
+        const scenarios = {
+
+            dry: [12, 32, 25, 80],
+
+            hot: [35, 42, 20, 95],
+
+            wet: [90, 23, 85, 30]
+
+        };
+
+        setValues(scenarios[b.dataset.s]);
+
+        auto = true;
+        manual = false;
+
+        log('Escenario: ' + b.textContent);
+
+        update();
+
+    };
+
+});
+
+// Reiniciar simulación
+
+$('reset').onclick = () => {
+
+    setValues([28, 29, 45, 75]);
+
+    auto = true;
+    manual = false;
+    water = 0;
+    previous = null;
+
+    $('log').replaceChildren();
+
+    update();
+
+};
+
+// Iniciar EcoRoot
+
+update();
+
+</script>
+
+</body>
+</html>
